@@ -1,0 +1,205 @@
+version: "3.8"
+
+services:
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - job-network
+
+  discovery-service:
+    image: poorna2601/service-reg
+    container_name: discovery-service
+    networks:
+      - job-network
+    ports:
+      - "8761:8761"
+
+  config-server:
+    image: poorna2601/configservergit
+    container_name: config-server
+    networks:
+      - job-network
+    depends_on:
+      - discovery-service
+    ports:
+      - "8888:8888"
+
+  api-gateway:
+    image: poorna2601/api-gateway
+    container_name: api-gateway
+    environment:
+      - JWT_KEY=asdfladf98a7df89aysf8d9yasiudfha9s87dfa89syudhfa98sdfyaisuhdfa98sfy
+    networks:
+      - job-network
+    depends_on:
+      - jobms
+      - companyms
+      - reviewms
+      - user
+      - config-server
+      - zipkin
+    ports:
+      - "8080:8080"
+
+  job-db:
+    image: postgres
+    container_name: job-db
+    environment:
+      - POSTGRES_DB=jobDB
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    networks:
+      - job-network
+    volumes:
+      - job-db-data:/var/lib/postgresql/data
+
+  company-db:
+    image: postgres
+    container_name: company-db
+    environment:
+      - POSTGRES_DB=companyDB
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    networks:
+      - job-network
+    volumes:
+      - company-db-data:/var/lib/postgresql/data
+
+  notify-db:
+      image: postgres
+      container_name: notify-db
+      environment:
+        - POSTGRES_DB=notifyDB
+        - POSTGRES_USER=user
+        - POSTGRES_PASSWORD=password
+      networks:
+        - job-network
+      volumes:
+        - notify-db-data:/var/lib/postgresql/data
+
+  review-db:
+    image: postgres
+    container_name: review-db
+    environment:
+      - POSTGRES_DB=reviewDB
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    networks:
+      - job-network
+    volumes:
+      - review-db-data:/var/lib/postgresql/data
+
+  user-db:
+    image: postgres
+    container_name: user-db
+    environment:
+      - POSTGRES_DB=userDB
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    networks:
+      - job-network
+    volumes:
+      - user-db-data:/var/lib/postgresql/data
+
+  notifyms:
+    image: poorna2601/notifyms
+    container_name: notifyms
+    networks:
+      - job-network
+    depends_on:
+      - config-server
+      - zipkin
+      - notify-db
+      - kafka
+
+  jobms:
+    image: poorna2601/jobms
+    container_name: jobms
+    networks:
+      - job-network
+    depends_on:
+      - config-server
+      - zipkin
+      - job-db
+
+  companyms:
+    image: poorna2601/companyms
+    container_name: companyms
+    networks:
+      - job-network
+    depends_on:
+      - config-server
+      - zipkin
+      - company-db
+    ports:
+      - "8081:8081"
+
+  reviewms:
+    image: poorna2601/reviewms
+    container_name: reviewms
+    networks:
+      - job-network
+    depends_on:
+      - config-server
+      - zipkin
+      - review-db
+
+  user:
+    image: poorna2601/user
+    container_name: userms
+    environment:
+      - JWT_KEY=asdfladf98a7df89aysf8d9yasiudfha9s87dfa89syudhfa98sdfyaisuhdfa98sfy
+    networks:
+      - job-network
+    depends_on:
+      - config-server
+      - zipkin
+      - user-db
+
+#kafka
+  kafka:
+    image: docker.io/bitnami/kafka:3.8
+    container_name: kafka
+    volumes:
+      - kafka_data:/bitnami
+    networks:
+      - job-network
+    environment:
+      # KRaft settings
+      KAFKA_CFG_NODE_ID: 0
+      KAFKA_CFG_PROCESS_ROLES: controller,broker
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 0@kafka:9093
+      # Listeners
+      KAFKA_CFG_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+
+  kafbat-ui:
+    container_name: kafbat-ui
+    image: ghcr.io/kafbat/kafka-ui:latest
+    ports:
+      - "8090:8080"
+    depends_on:
+      - kafka
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_KSQLDBSERVER: http://ksqldb0:8088/
+
+
+
+volumes:
+  job-db-data:
+  company-db-data:
+  review-db-data:
+  user-db-data:
+  kafka_data:
+  notify-db-data:
+
+networks:
+  job-network:

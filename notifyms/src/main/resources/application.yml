@@ -1,0 +1,17 @@
+#as we know kafka is running on 9092 and the port for ui is 8090
+#now we need to use 9092 nt ui
+
+#you can name the group anything
+spring:
+  kafka:
+    bootstrap-servers: kafka:9092
+    consumer:
+      group-id: ${spring.application.name}
+      #Consumer use deserializer
+      key-deserializer: org.apache.kafka.common.serialization.LongDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      #to gain trust and to avoid recursive errors
+      properties:
+        spring.json:
+          # Use trusted.packages to specify the package(s) to trust for deserialization
+          trusted.packages: com.learn.*

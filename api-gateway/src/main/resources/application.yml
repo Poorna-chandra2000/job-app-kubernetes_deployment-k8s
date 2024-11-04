@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: api-gateway
+
+
+#Config client to connect with Config server that is centralized
+  #api gateway depends on config server
+#spring:
+  config:
+   import : "configserver:http://config-server:8888" #for deployement we need to do this dont use local host use service name
+
+server:
+  port: 8080
+
+#  # API gateway configuration
+#  cloud:
+#    gateway:
+#      routes:
+#        - id: companyms
+#          uri: lb://companyms
+#          predicates:
+#            - Path=/companies/**
+#
+#        - id: jobms
+#          uri: lb://jobms
+#          predicates:
+#            - Path=/jobs/**
+#
+#        - id: reviewms
+#          uri: lb://reviewms
+#          predicates:
+#            - Path=/reviews/**
+#
+## Eureka registration for API gateway
+#eureka:
+#  client:
+#    serviceUrl:
+#      defaultZone: http://localhost:8761/eureka
+#    register-with-eureka: true
+#    fetch-registry: true
+#
+## Zipkin tracing configuration
+#management:
+#  tracing:
+#    sampling:
+#      probability: 1.0
+
+jwt:
+  secretKey: asdfladf98a7df89aysf8d9yasiudfha9s87dfa89syudhfa98sdfyaisuhdfa98sfy

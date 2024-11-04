@@ -1,0 +1,16 @@
+#as we know kafka is running on 9092 and the port for ui is 8090
+#now we need to use 9092 nt ui
+#just making topic name same throughout the application
+kafka:
+  topic:
+    company-rating_topic: company-rating-topic
+
+spring:
+  kafka:
+    bootstrap-server: kafka:9092
+    producer:
+      #producer always use serializers
+      key-serializer: org.apache.kafka.common.serialization.LongSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer  # Corrected here to JsonSerializer
+
+
