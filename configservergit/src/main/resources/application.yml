@@ -8,7 +8,7 @@ spring:
         git:
           uri: https://github.com/Poorna-chandra2000/jobaapp-config-server.git
           username: Poorna-chandra2000
-          password: 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
+          password: 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
           default-label: main
 #https://github:
 #  com/Poorna-chandra2000/jobaapp-config-server:

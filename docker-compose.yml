@@ -24,8 +24,7 @@ services:
       - job-network
     depends_on:
       - discovery-service
-    ports:
-      - "8888:8888"
+
 
   api-gateway:
     image: poorna2601/api-gateway
