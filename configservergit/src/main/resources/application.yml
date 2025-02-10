@@ -2,19 +2,9 @@ spring:
   application:
     name: configservergit
 
-  cloud:
-    config:
-      server:
-        git:
-#add uri username and password of config server
-          default-label: main
+
 
 server:
   port: 8888
 
-#eureka service ot needed for kubernetes deployment...kuberntes already has similar feature
-#eureka:
-#  client:
-##    serviceUrl:
-#    register-with-eureka: false
-#    fetch-registry: false
+
