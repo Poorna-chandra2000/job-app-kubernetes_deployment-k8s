@@ -1,0 +1,12 @@
+add jib file in pom.xml in all microservices and push it to hub using mvn clean pacakage -DskipTests
+open gcloud cli
+init
+create project->enable Kubernetes for created project and cluster on Google cloud
+check the connection on cli
+create k8s folder in root of of your Microservice application
+create pods i.e yml files for db and services ,connect services with db inside service.yml files
+keep type as ClusterIp for internal ip secures,if Loadbalancer thn its external too
+therefore keep all the services ClusterIp
+CREATE INGRESS.yml file and alow only api gateway ,ingress is like security interpreter
+you can also make api-gateway.yml as LoadBlancer but better use ingress
+for windows use Kubectl ,and for mac use k for commands on gcloud cli
