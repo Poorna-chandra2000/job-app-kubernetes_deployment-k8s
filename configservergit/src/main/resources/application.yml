@@ -6,11 +6,9 @@ spring:
     config:
       server:
         git:
-
+#add uri username and password of config server
           default-label: main
-#https://github:
-#  com/Poorna-chandra2000/jobaapp-config-server:
-#    git:
+
 server:
   port: 8888
 
