@@ -6,7 +6,9 @@ spring:
     config:
       server:
         git:
-#add uri username and password of config server
+          uri: https://github.com/--config server repo link
+          username: Poorna-chandra2000
+          password: configserver password
           default-label: main
 
 server:
