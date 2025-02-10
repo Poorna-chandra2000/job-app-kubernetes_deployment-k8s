@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reviewms
+spec:
+  selector:
+    matchLabels:
+      app: reviewms
+  template:
+    metadata:
+      labels:
+        app: reviewms
+    spec:
+      containers:
+      - name: reviewms
+        image: poorna2601/job-app-reviewms
+        resources:
+          limits:
+            memory: "400Mi"
+            cpu: "200m"
+          requests:
+            memory: "200Mi"
+            cpu: "100m"
+        env:
+          - name: SPRING_PROFILES_ACTIVE
+            value: k8s
+          - name: DB_USER
+            value: user
+          - name: DB_PASSWORD
+            value: password
+          - name: DB_SERVICE
+            value: review-db #this comes from reviewdb.yml
+          - name: DB_NAME
+            value: reviewDB
+        ports:
+        - containerPort: 8083
+
+---
+#Headless service
+apiVersion: v1
+kind: Service
+metadata:
+  name: reviewms
+spec:
+  selector:
+    app: reviewms
+  ports:
+  - port: 80
+    targetPort: 8083
+
+  

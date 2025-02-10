@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user
+spec:
+  selector:
+    matchLabels:
+      app: user
+  template:
+    metadata:
+      labels:
+        app: user
+    spec:
+      containers:
+      - name: user
+        image: poorna2601/job-app-user
+        resources:
+          limits:
+            memory: "400Mi"
+            cpu: "200m"
+          requests:
+            memory: "200Mi"
+            cpu: "100m"
+        env:
+          - name: SPRING_PROFILES_ACTIVE
+            value: k8s
+          - name: DB_USER
+            value: user
+          - name: DB_PASSWORD
+            value: password
+          - name: DB_SERVICE
+            value: notify-db #this comes from notifydb.yml
+          - name: DB_NAME
+            value: notifyDB
+        ports:
+        - containerPort: 9090
+
+---
+#Headless service
+apiVersion: v1
+kind: Service
+metadata:
+  name: user
+spec:
+  selector:
+    app: user
+  ports:
+  - port: 80
+    targetPort: 9090
+
+  

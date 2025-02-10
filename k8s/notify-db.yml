@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: notify-db
+spec:
+  selector:
+    matchLabels:
+      app: notify-db
+  serviceName: notify-db
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: notify-db
+    spec:
+      containers:
+        - name: notify-db
+          image: postgres:16
+          resources:
+            limits:
+              memory: "200Mi"
+              cpu: "200m"
+            requests:
+              memory: "100Mi"
+              cpu: "100m"
+          env:
+            - name: POSTGRES_USER
+              value: user
+            - name: POSTGRES_PASSWORD
+              value: password
+            - name: POSTGRES_DB
+              value: notifyDB
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi
+        storageClassName: "standard-rwo"
+        volumeMode: Filesystem
+
+---
+#headless service important
+apiVersion: v1
+kind: Service
+metadata:
+  name: notify-db #this name should be same as above service name #must use this name in notify service
+spec:
+  clusterIP: None
+  selector:
+    app: notify-db
+  ports:
+    - port: 5432
+      targetPort: 5432

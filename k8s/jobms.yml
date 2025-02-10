@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jobms
+spec:
+  selector:
+    matchLabels:
+      app: jobms
+  template:
+    metadata:
+      labels:
+        app: jobms
+    spec:
+      containers:
+      - name: jobms
+        image: poorna2601/job-app-jobms
+        resources:
+          limits:
+            memory: "400Mi"
+            cpu: "200m"
+          requests:
+            memory: "200Mi"
+            cpu: "100m"
+        env:
+          - name: SPRING_PROFILES_ACTIVE
+            value: k8s
+          - name: DB_USER
+            value: user
+          - name: DB_PASSWORD
+            value: password
+          - name: DB_SERVICE
+            value: job-db #this comes from jobdb.yml
+          - name: DB_NAME
+            value: jobDB
+        ports:
+        - containerPort: 8082
+
+---
+#Headless service
+apiVersion: v1
+kind: Service
+metadata:
+  name: jobms
+spec:
+  selector:
+    app: jobms
+  ports:
+  - port: 80
+    targetPort: 8082
+
+  

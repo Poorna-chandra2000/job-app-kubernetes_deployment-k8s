@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: companyms
+spec:
+  selector:
+    matchLabels:
+      app: companyms
+  template:
+    metadata:
+      labels:
+        app: companyms
+    spec:
+      containers:
+      - name: companyms
+        image: poorna2601/job-app-companyms
+        resources:
+          limits:
+            memory: "400Mi"
+            cpu: "200m"
+          requests:
+            memory: "200Mi"
+            cpu: "100m"
+        env:
+          - name: SPRING_PROFILES_ACTIVE
+            value: k8s
+          - name: DB_USER
+            value: user
+          - name: DB_PASSWORD
+            value: password
+          - name: DB_SERVICE
+            value: company-db #this comes from companydb.yml
+          - name: DB_NAME
+            value: companyDB
+        ports:
+        - containerPort: 8081
+
+---
+#Headless service
+apiVersion: v1
+kind: Service
+metadata:
+  name: companyms
+spec:
+  selector:
+    app: companyms
+  ports:
+  - port: 80
+    targetPort: 8081
+
+  

@@ -10,7 +10,7 @@ services:
       - job-network
 
   discovery-service:
-    image: poorna2601/service-reg
+    image: poorna2601/job-app-service-reg
     container_name: discovery-service
     networks:
       - job-network
@@ -18,7 +18,7 @@ services:
       - "8761:8761"
 
   config-server:
-    image: poorna2601/configservergit
+    image: poorna2601/job-app-configservergit
     container_name: config-server
     networks:
       - job-network
@@ -27,7 +27,7 @@ services:
 
 
   api-gateway:
-    image: poorna2601/api-gateway
+    image: poorna2601/job-app-api-gateway
     container_name: api-gateway
     environment:
       - JWT_KEY=asdfladf98a7df89aysf8d9yasiudfha9s87dfa89syudhfa98sdfyaisuhdfa98sfy
@@ -104,7 +104,7 @@ services:
       - user-db-data:/var/lib/postgresql/data
 
   notifyms:
-    image: poorna2601/notifyms
+    image: poorna2601/job-app-notifyms
     container_name: notifyms
     networks:
       - job-network
@@ -115,7 +115,7 @@ services:
       - kafka
 
   jobms:
-    image: poorna2601/jobms
+    image: poorna2601/job-app-jobms
     container_name: jobms
     networks:
       - job-network
@@ -125,7 +125,7 @@ services:
       - job-db
 
   companyms:
-    image: poorna2601/companyms
+    image: poorna2601/job-app-companyms
     container_name: companyms
     networks:
       - job-network
@@ -137,7 +137,7 @@ services:
       - "8081:8081"
 
   reviewms:
-    image: poorna2601/reviewms
+    image: poorna2601/job-app-reviewms
     container_name: reviewms
     networks:
       - job-network
@@ -147,7 +147,7 @@ services:
       - review-db
 
   user:
-    image: poorna2601/user
+    image: poorna2601/job-app-user
     container_name: userms
     environment:
       - JWT_KEY=asdfladf98a7df89aysf8d9yasiudfha9s87dfa89syudhfa98sdfyaisuhdfa98sfy
@@ -158,9 +158,12 @@ services:
       - zipkin
       - user-db
 
+
+
 #kafka
   kafka:
-    image: docker.io/bitnami/kafka:3.8
+    image: bitnami/kafka:latest
+    #docker.io/bitnami/kafka:3.8
     container_name: kafka
     volumes:
       - kafka_data:/bitnami
@@ -178,11 +181,12 @@ services:
       KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_CFG_INTER_BROKER_LISTENER_NAME: PLAINTEXT
 
+
   kafbat-ui:
     container_name: kafbat-ui
     image: ghcr.io/kafbat/kafka-ui:latest
     ports:
-      - "8090:8080"
+      - "8091:8080"
     depends_on:
       - kafka
     environment:
